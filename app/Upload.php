@@ -4,13 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class File extends Model
+class Upload extends Model
 {
-    public function upload(){
-        return $this->belongsTo(Upload::class);
+    public function files(){
+        return $this->hasMany(File::class);
     }
-    public function user()
-    {
+
+    public function user(){
         return $this->belongsTo(User::class);
     }
 
@@ -20,8 +20,8 @@ class File extends Model
     {
         parent::boot();
 
-        static::creating(function ($file) {
-            $file->{$file->getKeyName()} = (string) Str::uuid();
+        static::creating(function ($upload) {
+            $upload->{$upload->getKeyName()} = (string) Str::uuid();
         });
     }
 

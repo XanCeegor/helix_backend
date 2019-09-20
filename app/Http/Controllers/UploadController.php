@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\File;
 use Illuminate\Http\Request;
 
-class FileController extends Controller
+class UploadController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -33,8 +33,7 @@ class FileController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         if(count($request->file('files'))){
             foreach($request->file('files') as $file){
                 $file->store('files');
