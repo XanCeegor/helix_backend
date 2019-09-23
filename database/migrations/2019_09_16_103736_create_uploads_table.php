@@ -14,13 +14,15 @@ class CreateUploadsTable extends Migration
     public function up()
     {
         Schema::create('uploads', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->increments('id');
+            $table->string('share_id');
             $table->string('visibility');
             $table->boolean('toDelete')->default(true);
-            $table->uuid('user_id');
+            $table->integer('user_id')->unsigned()->nullable();
             $table->foreign('user_id')
-                ->references('id')->on('users')
-                ->onDelete('cascade')->nullable();
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

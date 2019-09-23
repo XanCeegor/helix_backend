@@ -60,31 +60,8 @@ class User extends Authenticatable implements JWTSubject
 
     protected $guarded = []; // YOLO
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($user) {
-            $user->{$user->getKeyName()} = (string) Str::uuid();
-        });
-    }
-
-    public function getIncrementing()
-    {
-        return false;
-    }
-
-    public function getKeyType()
-    {
-        return 'string';
-    }
 
     public function uploads(){
-        return $this->hasMany(Upload::class);
-    }
-
-    public function files()
-    {
-        return $this->hasMany(File::class);
+        return $this->hasMany('App\Upload');
     }
 }

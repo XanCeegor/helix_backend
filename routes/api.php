@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 Route::post('upload', 'UploadController@store');
+Route::get('upload/{id}', 'UploadController@show');
+Route::get('downloadfile/{id}', 'FileController@downloadFile');
+Route::get('downloadzip/{id}', 'FileController@downloadZIP');
 
 Route::group(['prefix' => 'auth'], function ($router) {
     Route::post('login', 'AuthController@login');

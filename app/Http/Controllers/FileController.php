@@ -3,10 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\File;
+use App\Upload;
 use Illuminate\Http\Request;
 
 class FileController extends Controller
 {
+
+    public function downloadFile($id)
+    {
+        $file = File::findOrFail($id);
+        return response()->download(storage_path('app/files/'.$file->name));
+    }
+
+    public function downloadZIP($id){
+
+        $files = Upload::where('share_id', $id)->first()->files;
+        $zip_file = $id.'.zip';
+        $zip = new \ZipArchive();
+        $zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        foreach($files as $file){
+            $zip->addFile((storage_path('app/files/'.$file->name)), $file->originalName);
+        }
+        $zip->close();
+        return response()->download($zip_file);
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -35,14 +57,17 @@ class FileController extends Controller
      */
     public function store(Request $request)
     {
-        if(count($request->file('files'))){
-            foreach($request->file('files') as $file){
-                $file->store('files');
-            }
-        }
-        return response()->json([
-            'message' => 'Done'
-        ]);
+        // if(count($request->file('files'))){
+        //     foreach($request->file('files') as $file){
+        //         $file->store('files');
+        //     }
+        // }
+        // $upload = User::where('name', 'Xan')->first()->uploads()->create(['visibility' => 'visible', 'toDelete' => false]);
+
+        // $test = json_encode($upload);
+        // return response()->json([
+        //     $test
+        // ]);
     }
 
     /**
