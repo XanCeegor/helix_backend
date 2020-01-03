@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\File;
 use App\User;
 use App\Upload;
+use FileVault;
 use Illuminate\Http\Request;
 use App\Http\Resources\File as FileResource;
 
@@ -36,22 +37,25 @@ class UploadController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request){
-        if(count($request->file('files'))){
-            $shareId = (substr(md5(rand()), 0, 7));
-            try{
+    public function store(Request $request)
+    {
+        if (count($request->file('files'))) {
+            try {
+                $shareId = (substr(md5(rand()), 0, 7));
                 $user = User::where('name', 'Anon')->first();   //save file anonymously
                 $upload = $user->uploads()->create(['share_id' => $shareId, 'visibility' => 'public']);
-                foreach($request->file('files') as $file){
+                foreach ($request->file('files') as $file) {
                     $path = $file->store('files');
-                    $upload->files()->create(['name' => basename($path), 'originalName' => $file->getClientOriginalName(), 'size' => $file->getClientSize(),
-                    'path' => $path, 'visibility' => 'public', 'type' => $file->getClientOriginalExtension()]);
+                    FileVault::encrypt($path);
+                    $upload->files()->create([
+                        'name' => basename($path), 'originalName' => $file->getClientOriginalName(), 'size' => $file->getClientSize(),
+                        'path' => $path, 'visibility' => 'public', 'type' => $file->getClientOriginalExtension()
+                    ]);
                 }
                 return response()->json([
                     "success" => $shareId
                 ]);
-            }
-            catch(\Exception $e){
+            } catch (\Exception $e) {
                 return response()->json([
                     "error" => $e
                 ]);
@@ -61,7 +65,7 @@ class UploadController extends Controller
 
     public function show($id)
     {
-        $files = Upload::where('share_id' ,$id)->first()->files;
+        $files = Upload::where('share_id', $id)->first()->files;
         return new FileResource($files);
     }
 

@@ -13,6 +13,9 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.0",
         "laravel/tinker": "^1.0",
+        "soarecostin/file-vault": "^1.0",
+        "spatie/laravel-cors": "^1.6",
+        "stechstudio/laravel-zipstream": "^2.0",
         "tymon/jwt-auth": "1.0.x-dev"
     },
     "require-dev": {
