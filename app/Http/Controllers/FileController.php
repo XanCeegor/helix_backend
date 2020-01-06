@@ -7,8 +7,8 @@ use FileVault;
 use Str;
 use App\File;
 use App\Upload;
+use App\Jobs\DeleteTempFiles;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
@@ -24,31 +24,19 @@ class FileController extends Controller
 
     public function downloadZIP($id)
     {
-
         $files = Upload::where('share_id', $id)->first()->files;
-        // $zip_file = Zip::create("myfile.zip");
-        // $zip_file->add(storage_path('app/files/qPygS13dEaa8KTDnzvx69fVBwqXiSJl6YX06NvcJ.pdf'));
-        // foreach ($files as $file) {
-        //     if (file_exists(storage_path('app/' . $file->path))) {
-        //         $zip_file->add(storage_path('app/' . $file->path));
-        //     } else {
-        //         return 'File: ' . $file->path . ' not found!';
-        //     }
-        // }
-        // return response()->download(storage_path('app/files/qPygS13dEaa8KTDnzvx69fVBwqXiSJl6YX06NvcJ.pdf'));
-
-        $zip_file = $id . '.zip';
-        $zip = new \ZipArchive();
-        $zip->open($zip_file, \ZipArchive::CREATE);
+        $zip_file = Zip::create("myfile.zip");
         foreach ($files as $file) {
-            FileVault::decryptCopy($file->path . '.enc');
-            $zip->addFile(storage_path('app/' . $file->path), $file->originalName);
+            if (file_exists(storage_path('app/' . $file->path . '.enc'))) {
+                FileVault::decryptCopy($file->path . '.enc');
+                $zip_file->add(storage_path('app/' . $file->path));
+            } else {
+                return 'File: ' . $file->path . ' not found!';
+            }
         }
-        $zip->close();
-        foreach ($files as $file) {
-            Storage::delete($file->path);
-        }
-        return response()->download($zip_file);
+        //Clean up temp decrypted files shortly after download
+        DeleteTempFiles::dispatch($files)->delay(now()->addMinutes(5));
+        return $zip_file;
     }
 
 
