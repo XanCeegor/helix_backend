@@ -41,12 +41,12 @@ class FileController extends Controller
         $zip = new \ZipArchive();
         $zip->open($zip_file, \ZipArchive::CREATE);
         foreach ($files as $file) {
-            FileVault::decryptCopy('files/' . $file->name . '.enc');
-            $zip->addFile(storage_path('app/files/' . $file->name), $file->originalName);
+            FileVault::decryptCopy($file->path . '.enc');
+            $zip->addFile(storage_path('app/' . $file->path), $file->originalName);
         }
         $zip->close();
         foreach ($files as $file) {
-            Storage::delete('files/' . $file->name);
+            Storage::delete($file->path);
         }
         return response()->download($zip_file);
     }
