@@ -10,7 +10,7 @@ git clone https://github.com/XanCeegor/helix_backend.git
 
 ### Install the dependencies
 ```
-git clone https://github.com/XanCeegor/helix_backend.git
+composer install
 ```
 
 ### Update .env file 
