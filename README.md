@@ -3,7 +3,12 @@ This is the backend for the Helix project. It is responsibile for handling API c
 For a description of what the Helix project is check out the [Helix Frontend](https://github.com/XanCeegor/helix_frontend)
 
 ## Project setup
-### clone the repo
+### Clone the repo
+```
+git clone https://github.com/XanCeegor/helix_backend.git
+```
+
+### Install the dependencies
 ```
 git clone https://github.com/XanCeegor/helix_backend.git
 ```
